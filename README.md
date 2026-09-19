@@ -115,7 +115,9 @@ Local games resume from their saved clock when the page reopens; local clocks do
 
 ## Public hosting
 
-The code runs as one persistent Node server. It has **not been deployed to a public URL**. Deploy it to a Node-compatible host with:
+The public GitHub Pages edition is available at **https://davidolufunmilayo1-blip.github.io/advaced-chess-academy/**. It supports computer and same-device chess, puzzles, lessons, reviews and training. Online multiplayer, tournaments and shared community posts are disabled on that edition because they need a server.
+
+The full server edition runs as one persistent Node server. Deploy it to a Node-compatible host with:
 
 - Start command: `npm start`
 - Node.js 22 or newer; no build command or dependency install required

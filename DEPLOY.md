@@ -1,9 +1,12 @@
-# Separate public chess site
+# Public chess website
 
-This folder contains only the chess app. No Kiddo Sprout assets, local game records, player credentials or account secrets are included.
+The separate academy is published on GitHub Pages:
+https://davidolufunmilayo1-blip.github.io/advaced-chess-academy/
 
-Deploy as a Render Docker web service using render.yaml. The free service runs the Node multiplayer server and receives a public HTTPS URL. PUBLIC_SITE_URL overrides the origin; otherwise the server uses Render's RENDER_EXTERNAL_URL for share metadata and search-engine links. Health check: /api/health.
+GitHub Pages publishes `main` from the repository root. `index.html` opens `david.html`; `.nojekyll` keeps the existing assets unchanged. `about.html` is the public introduction and share destination.
 
-Free Render services sleep while idle and their filesystem is temporary. Online rooms, tournaments and community records can disappear when the service restarts or redeploys. Local browser history is separate. Durable hosting requires a persistent disk or a database; set DATA_DIR to the persistent disk path if one is configured. Do not scale the JSON-backed server to multiple instances.
+Computer and same-device games, puzzles, lessons, game review, study tools and the Academy Lab run in the browser. Progress stays in that browser. GitHub Pages cannot run the Node server, so online multiplayer, friend tournaments and shared community posts are explicitly unavailable in this edition.
 
-The files are prepared; no hosting deployment has been completed yet. A hosting account must be signed in and connected to the separate chess source repository. Do not upload this to KiddoSprout-Family-Hub.
+The Kiddo Sprout public games card links here; the academy remains a separate website. Its published card source is `public-site/games/index.html` in `hammy-boy/KiddoSprout-Family-Hub`.
+
+For the full server edition, use a persistent Node-compatible host, run `npm start`, and configure `PUBLIC_SITE_URL`, `PORT` and a persistent `DATA_DIR`. Do not scale the JSON-backed server to multiple instances. No server hosting service has been deployed.
