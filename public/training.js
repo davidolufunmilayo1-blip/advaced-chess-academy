@@ -45,7 +45,7 @@ if(typeof module!=='undefined')module.exports=TRAINING;
   const seeds=['7k/8/5KQ1/8/8/8/8/8 w - - 0 1','k7/2R5/8/8/8/8/7R/6K1 w - - 0 1','6k1/5ppp/8/8/8/8/8/4R1K1 w - - 0 1','6rk/6pp/7N/8/8/8/8/6K1 w - - 0 1'];
   function fen(s){const rows=[];for(let r=0;r<8;r++){let row='',empty=0;for(let c=0;c<8;c++){const p=s.board[r*8+c];if(!p)empty++;else{if(empty)row+=empty;empty=0;row+=p}}if(empty)row+=empty;rows.push(row)}return rows.join('/')+' '+s.turn+' - - 0 1'}
   function candidate(core,level='easy',random=Math.random){
-    if(!['easiest','easy','medium','hard'].includes(level))throw Error('Choose Easiest, Easier, Normal / Medium, or Harder.');
+    if(!['easiest','easy','medium','hard'].includes(level))throw Error('Choose Easiest, Easier, Normal, or Harder.');
     const pick=n=>Math.floor(random()*n),base=core.fromFEN(seeds[pick(level==='easiest'?2:level==='easy'?3:4)]),flip=pick(2),mirror=pick(2);
     const s={...base,board:Array(64).fill(null),turn:flip?'b':'w'};
     base.board.forEach((p,i)=>{if(p){const r=Math.floor(i/8),c=i%8;s.board[(flip?7-r:r)*8+(mirror?7-c:c)]=flip?(p===p.toUpperCase()?p.toLowerCase():p.toUpperCase()):p}});
@@ -64,7 +64,7 @@ if(typeof module!=='undefined')module.exports=TRAINING;
     const usable=mates.filter(m=>!m.promotion||m.promotion==='q');
     if(!usable.length||(level==='hard'&&mates.length!==1))return null;
     const move=usable[pick(usable.length)],position=fen(s),uci=core.square(move.from)+core.square(move.to)+(move.promotion||'');
-    return {id:'endless:'+position,generated:true,difficulty:level,title:'Find the finishing move',theme:'Checkmate',level:({easiest:'Easiest',easy:'Easier',medium:'Normal / Medium',hard:'Harder'})[level],fen:position,line:[uci],hint:'Look for a check with your '+({q:'queen',r:'rook',b:'bishop',n:'knight',p:'pawn',k:'king'}[s.board[move.from].toLowerCase()])+' on '+core.square(move.from)+'.',explain:core.completeNotation(s,move,core.apply(s,move))+' is checkmate: the king has no legal escape.'};
+    return {id:'endless:'+position,generated:true,difficulty:level,title:'Find the finishing move',theme:'Checkmate',level:({easiest:'Easiest (-600)',easy:'Easier (-300)',medium:'Normal',hard:'Harder (+300)'})[level],fen:position,line:[uci],hint:'Look for a check with your '+({q:'queen',r:'rook',b:'bishop',n:'knight',p:'pawn',k:'king'}[s.board[move.from].toLowerCase()])+' on '+core.square(move.from)+'.',explain:core.completeNotation(s,move,core.apply(s,move))+' is checkmate: the king has no legal escape.'};
   }
   async function generate(core,level,seen=[],cancelled=()=>false,random=Math.random){
     const recent=new Set(seen);

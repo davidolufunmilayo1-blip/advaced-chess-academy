@@ -12,6 +12,12 @@ The board now defaults to **Club violet**, with the previous Garden, Walnut, Oce
 
 Open **Your trophy shelf** on the Play page to see six achievement badges. Completing 1, 5, and all puzzles or lessons earns the corresponding badges; repeated completions do not add extra progress. The shelf updates as you practice using the progress saved in this browser.
 
+## Academy Lab
+
+Open **Academy lab** in the navigation or the Play page activity cards for eight learning activities: square colours, knight vision, piece paths, material maths, notation decoding, rules, opening recognition, and board memory. Choose Easier, Medium or Harder and a relaxed, 60-second or three-minute round of up to ten questions. Answer with buttons or number keys 1–4. Hints and skips do not earn points. Memory diagrams hide before you answer and return with the explanation.
+
+Rounds leave your current game untouched; leaving the activity ends the round. Personal bests are compared only within matching activity, difficulty and timer settings. The last 30 nonempty rounds are saved in this browser; these new lab scores are not included in profile backup files. Rules, notation and opening questions use finite authored pools; board-vision and material questions are generated. Diagrams teach movement and memory and are not full legal game positions.
+
 ## Mistake clinic
 
 After analysing a game in Review, select an inaccuracy, mistake, or blunder and choose **Practise this mistake**. The clinic saves up to 30 positions in this browser, with filters for completed positions and positions needing practice. Hints and revealed suggestions do not earn completion; retry without help to complete an exercise. Suggestions come from the bounded local analysis, not a guaranteed best-move engine. Saved positions are included in progress backups.

@@ -88,6 +88,7 @@ function createChessServer({ dataDir = process.env.DATA_DIR || path.join(__dirna
   assets['/queen.svg'] = ['public/queen.svg', 'image/svg+xml'];
   assets['/favicon.ico'] = ['public/queen.svg', 'image/svg+xml'];
   assets['/club-theme.css'] = ['public/club-theme.css', 'text/css'];
+  assets['/academy-lab.js'] = ['public/academy-lab.js', 'text/javascript'];
   assets['/club-shell.js'] = ['public/club-shell.js', 'text/javascript'];
   const server = http.createServer(async (req, res) => {
     try {
