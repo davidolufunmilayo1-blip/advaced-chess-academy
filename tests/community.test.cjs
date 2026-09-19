@@ -1,0 +1,44 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
+const {createChessServer}=require('../server.cjs');
+
+test('community: shared posts, replies, likes, ownership, search, reports, moderation, and persistence',async t=>{
+  const dataDir=fs.mkdtempSync(path.join(os.tmpdir(),'chess-community-'));
+  const moderatorKey='test-moderator-key-only-for-local-tests';let time=Date.now();
+  let server=createChessServer({dataDir,now:()=>time,moderatorKey});await new Promise(r=>server.listen(0,'127.0.0.1',r));let base='http://127.0.0.1:'+server.address().port;
+  t.after(async()=>{await new Promise(r=>server.close(r));fs.rmSync(dataDir,{recursive:true,force:true})});
+  async function request(route,body,token,status=200,key){const response=await fetch(base+'/api/community'+route,{method:body===undefined?'GET':'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{}),...(key?{'X-Community-Moderator':key}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})});const data=await response.json();assert.equal(response.status,status,JSON.stringify(data));return data}
+  assert.equal((await request('/posts')).stats.posts,0);
+  const alice=await request('/session',{name:'KnightExplorer'},null,201),bob=await request('/session',{name:'BishopBuddy'},null,201);
+  const post=await request('/posts',{category:'questions',title:'When should I castle?',text:'How can I tell if castling is a good idea?'},alice.token,201);
+  assert.equal(post.own,true);assert.equal('author' in post,false);
+  const list=await request('/posts',undefined,bob.token);assert.equal(list.posts[0].title,post.title);assert.equal(list.posts[0].own,false);assert.equal(JSON.stringify(list).includes(alice.token),false);
+  await request('/posts/'+post.id+'/delete',{},bob.token,403);
+  await request('/posts/'+post.id+'/reply',{text:'No nickname'},null,401);
+  const replied=await request('/posts/'+post.id+'/reply',{text:'Develop your pieces and check that the path is safe. <script>alert(1)</script>'},bob.token);
+  assert.equal(replied.replyCount,1);assert.ok(replied.replies[0].text.includes('<script>'));
+  const replyId=replied.replies[0].id;
+  await request('/posts/'+post.id+'/delete/'+replyId,{},alice.token,403);
+  const liked=await request('/posts/'+post.id+'/like',{liked:true},bob.token);assert.equal(liked.likes,1);
+  assert.equal((await request('/posts/'+post.id+'/like',{liked:true},bob.token)).likes,1,'Like requests are idempotent');
+  assert.equal((await request('/posts/'+post.id+'/like',{liked:false},bob.token)).likes,0);
+  assert.equal((await request('/posts?q=castle')).total,1);assert.equal((await request('/posts?category=ideas')).total,0);assert.equal((await request('/posts?sort=mine',undefined,bob.token)).total,0);
+  await request('/posts',{category:'questions',title:'Another post',text:'Another question'},alice.token,429);
+  await request('/posts/'+post.id+'/report',{reason:'Personal information'},bob.token);
+  assert.equal((await request('/posts')).total,0);await request('/posts/'+post.id,undefined,alice.token,404);
+  await request('/moderation',undefined,null,403,'wrong');
+  const queue=await request('/moderation',undefined,null,200,moderatorKey);assert.equal(queue.posts[0].reports[0].reason,'Personal information');
+  await request('/moderation',{id:post.id,action:'restore'},null,200,moderatorKey);
+  assert.equal((await request('/posts')).total,1);
+  time+=4000;await request('/session',{name:'RookExplorer'},alice.token);
+  const second=await request('/posts',{category:'celebrations',title:'I solved a fork!',text:'I found the knight fork in the puzzle trainer.'},alice.token,201);assert.equal(second.name,'RookExplorer');
+  await new Promise(r=>server.close(r));server=createChessServer({dataDir,now:()=>time,moderatorKey});await new Promise(r=>server.listen(0,'127.0.0.1',r));base='http://127.0.0.1:'+server.address().port;
+  assert.equal((await request('/posts',undefined,alice.token)).total,2);assert.equal((await request('/me',undefined,alice.token)).name,'RookExplorer');
+  await request('/posts/'+post.id+'/delete/'+replyId,{},bob.token);assert.equal((await request('/posts/'+post.id)).replyCount,0);
+  await request('/posts/'+post.id+'/delete',{},alice.token);assert.equal((await request('/posts')).total,1);
+  await request('/posts',{category:'invalid',title:'Valid title',text:'Valid text'},alice.token,400);
+  for(const asset of ['/chess-extras/community.html','/chess-extras/community.js','/chess-extras/community.css'])assert.equal((await fetch(base+asset)).status,200);
+  assert.equal((await fetch(base+'/.data/community.json')).status,404);
+  assert.equal((await fetch(base+'/.data/community-moderator-key')).status,404);
+});

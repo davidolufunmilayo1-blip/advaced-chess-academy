@@ -1,0 +1,4 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),Clock=require('../lib/practice-clock');
+test('practice clock switches only on active press, adds increment, pauses, expires and resets',()=>{
+ let now=0;const c=new Clock(()=>now);c.reset(5,2);assert.equal(c.press('w'),false);c.toggle();now=1200;assert.equal(c.press('b'),false);assert.equal(c.remaining.w,3800);assert.equal(c.press('w'),true);assert.equal(c.remaining.w,5800);assert.equal(c.turn,'b');now=2200;c.toggle();assert.equal(c.remaining.b,4000);now=10000;c.tick();assert.equal(c.remaining.b,4000);c.toggle();now=15000;assert.equal(c.press('b'),false);assert.equal(c.expired,'b');assert.equal(c.remaining.b,0);c.toggle();assert.equal(c.running,false);c.reset(60,0);assert.equal(c.expired,null);assert.equal(c.remaining.w,60000);assert.equal(c.turn,'w');assert.throws(()=>c.reset(-1,0));assert.throws(()=>c.reset(60,61));
+});
