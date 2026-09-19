@@ -1,5 +1,6 @@
 (() => {
   const $=s=>document.querySelector(s),categories={questions:'♟ Question',ideas:'✧ Idea or tip',celebrations:'★ Little win'};
+  if(location.hostname.endsWith('.github.io')){const message=$('#connection-message');message.hidden=false;message.textContent='Shared community posts need a game server and are not available on this public edition. You can still play, study and train using the menu.';document.querySelectorAll('main button,main input,main select,#open-moderation').forEach(el=>el.disabled=true);$('#feed-empty').hidden=false;$('#empty-title').textContent='Community is not connected';$('#empty-description').textContent='No shared posts are loaded on this edition.';return}
   let session={token:null,name:null},page=1,pages=1,category='all',requestNumber=0,searchTimer,toastTimer,afterProfile=null,thread=null,deleteTarget=null,reportTarget=null,busy=false;
   try{const saved=JSON.parse(localStorage.getItem('chess-club-community'));if(saved&&typeof saved.token==='string'&&/^[a-f0-9]{48}$/.test(saved.token))session=saved}catch{}
   function node(tag,className,text){const el=document.createElement(tag);if(className)el.className=className;if(text!==undefined)el.textContent=text;return el}

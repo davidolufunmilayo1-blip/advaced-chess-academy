@@ -59,6 +59,11 @@
     try{if(!localStorage.getItem('chess-club-design-v1')){document.querySelector('#theme').value='violet';setTheme();save();localStorage.setItem('chess-club-design-v1','1')}}catch{}
     const initialView=location.hash.slice(1);if(initialView==='drawing')document.querySelector('#drawing-tools-nav').click();if(['play','online','puzzles','learn','review','history','tournaments','train','tools','glossary','mates','openings','endgames','rush','coaches','profile','plan','clinic','lab'].includes(initialView))switchView(initialView);
   }
+  if(rootPage&&location.hostname.endsWith('.github.io')){
+    for(const [id,message] of [['online','Online multiplayer needs a game server. On this public edition, you can play the computer or another person on the same device.'],['tournaments','Online tournaments need a game server and are not available on this public edition. Puzzles, lessons and practice activities are ready to play.']]){
+      const section=document.querySelector('#view-'+id),notice=document.createElement('p');notice.className='notice';notice.textContent=message;section.querySelector('.section-heading').after(notice);section.querySelectorAll('button,input,select').forEach(el=>el.disabled=true);
+    }
+  }
   // Group the growing academy menu and make it searchable on every page.
   const panel=document.createElement('div');panel.id='academy-navigation-panel';navigation.before(panel);
   const searchLabel=document.createElement('label');searchLabel.className='academy-menu-search';searchLabel.textContent='Find an activity';const searchInput=document.createElement('input');searchInput.id='academy-nav-search';searchInput.type='search';searchInput.placeholder='Puzzles, review, coaches…';searchInput.autocomplete='off';searchLabel.append(searchInput);
